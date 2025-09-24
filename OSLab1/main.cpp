@@ -148,9 +148,14 @@ int main() {
 
     DisplayTextFileContent(reportFilename);
 
+#ifdef TESTING
+    return 0;
+#endif
+
     std::cout << "\nAll operations completed successfully. Press Enter to exit...";
     std::cin.ignore();
     std::cin.get();
 
     return 0;
+
 }

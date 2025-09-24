@@ -9,43 +9,44 @@ struct EmployeeData {
     double hoursWorked;
 };
 
-bool CreateEmployeeDataFile(const std::string& filename, int recordCount) {
+bool CreateEmployeeDataFile(const std::string& filename, int recordCount, std::istream& inputStream = std::cin, std::ostream& outputStream = std::cout) {
     std::ofstream outputFile(filename, std::ios::binary);
     if (!outputFile.is_open()) {
-        std::cerr << "Error: Cannot create file " << filename << std::endl;
+        outputStream << "Error: Cannot create file " << filename << std::endl;
         return false;
     }
 
     EmployeeData employee;
     for (int i = 0; i < recordCount; i++) {
-        std::cout << "\nEnter details for employee #" << (i + 1) << ":\n";
+        outputStream << "\nEnter details for employee #" << (i + 1) << ":\n";
 
-        std::cout << "Employee ID: ";
-        while (!(std::cin >> employee.identifier)) {
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
-            std::cout << "Invalid input. Please enter a numeric ID: ";
+        outputStream << "Employee ID: ";
+        while (!(inputStream >> employee.identifier)) {
+            inputStream.clear();
+            inputStream.ignore(10000, '\n');
+            outputStream << "Invalid input. Please enter a numeric ID: ";
         }
 
-        std::cout << "Employee name (max 9 characters): ";
-        std::cin.ignore();
-        std::cin.getline(employee.fullName, 10);
+        outputStream << "Employee name (max 9 characters): ";
+        inputStream.ignore();
+        inputStream.getline(employee.fullName, 10);
 
-        std::cout << "Hours worked: ";
-        while (!(std::cin >> employee.hoursWorked) || employee.hoursWorked < 0) {
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
-            std::cout << "Invalid input. Please enter a positive number: ";
+        outputStream << "Hours worked: ";
+        while (!(inputStream >> employee.hoursWorked) || employee.hoursWorked < 0) {
+            inputStream.clear();
+            inputStream.ignore(10000, '\n');
+            outputStream << "Invalid input. Please enter a positive number: ";
         }
 
         outputFile.write(reinterpret_cast<char*>(&employee), sizeof(EmployeeData));
     }
 
     outputFile.close();
-    std::cout << "Data file '" << filename << "' created successfully with " << recordCount << " records.\n";
+    outputStream << "Data file '" << filename << "' created successfully with " << recordCount << " records.\n";
     return true;
 }
 
+#ifndef TESTING
 int main(int argc, char* argv[]) {
     if (argc != 3) {
         std::cerr << "Usage: Creator <filename> <record_count>" << std::endl;
@@ -70,3 +71,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+#endif

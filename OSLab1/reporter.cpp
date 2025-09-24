@@ -44,6 +44,7 @@ bool GenerateSalaryReport(const std::string& inputFile, const std::string& outpu
     return true;
 }
 
+#ifndef TESTING
 int main(int argc, char* argv[]) {
     if (argc != 4) {
         std::cerr << "Usage: Reporter <input_file> <output_file> <hourly_rate>" << std::endl;
@@ -69,3 +70,4 @@ int main(int argc, char* argv[]) {
     std::cout << "Report '" << argv[2] << "' generated successfully.\n";
     return 0;
 }
+#endif
