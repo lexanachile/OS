@@ -1,74 +1,44 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstring>
+#include "common.h"
 
-struct EmployeeData {
-    int identifier;
-    char fullName[10];
-    double hoursWorked;
-};
+using namespace std;
 
-bool CreateEmployeeDataFile(const std::string& filename, int recordCount, std::istream& inputStream = std::cin, std::ostream& outputStream = std::cout) {
-    std::ofstream outputFile(filename, std::ios::binary);
-    if (!outputFile.is_open()) {
-        outputStream << "Error: Cannot create file " << filename << std::endl;
+bool write_employees_to_file(const string& filename, int amount)
+{
+    ofstream file_out(filename, ios::binary);
+    if (!file_out.is_open())
+    {
+        cerr << "Error: Cannot create file " << filename << endl;
         return false;
     }
 
-    EmployeeData employee;
-    for (int i = 0; i < recordCount; i++) {
-        outputStream << "\nEnter details for employee #" << (i + 1) << ":\n";
-
-        outputStream << "Employee ID: ";
-        while (!(inputStream >> employee.identifier)) {
-            inputStream.clear();
-            inputStream.ignore(10000, '\n');
-            outputStream << "Invalid input. Please enter a numeric ID: ";
-        }
-
-        outputStream << "Employee name (max 9 characters): ";
-        inputStream.ignore();
-        inputStream.getline(employee.fullName, 10);
-
-        outputStream << "Hours worked: ";
-        while (!(inputStream >> employee.hoursWorked) || employee.hoursWorked < 0) {
-            inputStream.clear();
-            inputStream.ignore(10000, '\n');
-            outputStream << "Invalid input. Please enter a positive number: ";
-        }
-
-        outputFile.write(reinterpret_cast<char*>(&employee), sizeof(EmployeeData));
+    cout << "Enter employee data (ID Name Hours) for " << amount << " employees:" << endl;
+    for (int i = 0; i < amount; ++i)
+    {
+        employee emp;
+        cout << "Employee " << (i + 1) << ": ";
+        cin >> emp;
+        file_out.write(reinterpret_cast<const char*>(&emp), sizeof(employee));
     }
 
-    outputFile.close();
-    outputStream << "Data file '" << filename << "' created successfully with " << recordCount << " records.\n";
+    file_out.close();
     return true;
 }
 
-#ifndef TESTING
-int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        std::cerr << "Usage: Creator <filename> <record_count>" << std::endl;
+int main(int argc, char* argv[])
+{
+    if (argc != 3)
+    {
+        cerr << "Usage: creator.exe <filename> <record_count>" << endl;
         return 1;
     }
 
-    int recordCount;
-    try {
-        recordCount = std::stoi(argv[2]);
-        if (recordCount <= 0) {
-            std::cerr << "Error: Record count must be a positive integer" << std::endl;
-            return 1;
-        }
-    } catch (const std::exception& e) {
-        std::cerr << "Error: Invalid record count - " << e.what() << std::endl;
-        return 1;
-    }
+    string filename = argv[1];
+    int record_count = stoi(argv[2]);
 
-    if (!CreateEmployeeDataFile(argv[1], recordCount)) {
+    if (!write_employees_to_file(filename, record_count))
+    {
         return 1;
     }
 
     return 0;
 }
-#endif

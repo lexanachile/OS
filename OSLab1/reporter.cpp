@@ -1,73 +1,58 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <iomanip>
-#include <windows.h>
+#include "common.h"
 
-struct EmployeeRecord {
-    int employeeId;
-    char employeeName[10];
-    double workedHours;
-};
+using namespace std;
 
-bool GenerateSalaryReport(const std::string& inputFile, const std::string& outputFile, double hourlyRate) {
-    std::ifstream inFile(inputFile, std::ios::binary);
-    if (!inFile.is_open()) {
-        std::cerr << "Error: Cannot open input file " << inputFile << std::endl;
+bool generate_report(const string& bin_filename, const string& report_filename, double hourly_rate)
+{
+    ifstream file_in(bin_filename, ios::binary);
+    if (!file_in.is_open())
+    {
+        cerr << "Error: Cannot open binary file " << bin_filename << endl;
         return false;
     }
 
-    std::ofstream outFile(outputFile);
-    if (!outFile.is_open()) {
-        std::cerr << "Error: Cannot create output file " << outputFile << std::endl;
-        inFile.close();
+    ofstream report_out(report_filename);
+    if (!report_out.is_open())
+    {
+        cerr << "Error: Cannot create report file " << report_filename << endl;
+        file_in.close();
         return false;
     }
 
-    const unsigned char bom[] = {0xEF, 0xBB, 0xBF};
-    outFile.write(reinterpret_cast<const char*>(bom), sizeof(bom));
+    report_out << "Report for file \"" << bin_filename << "\"\n";
+    report_out << "Employee number, employee name, hours, salary\n";
 
-    outFile << "File report \"" << inputFile << "\"\n";
-    outFile << "Employee's number\tEmployee's name\tTime\tSalary\n";
-
-    EmployeeRecord employee;
-    while (inFile.read(reinterpret_cast<char*>(&employee), sizeof(EmployeeRecord))) {
-        double salary = employee.workedHours * hourlyRate;
-        outFile << employee.employeeId << "\t\t\t"
-                << employee.employeeName << "\t\t"
-                << employee.workedHours << "\t"
-                << std::fixed << std::setprecision(2) << salary << "\n";
+    employee emp;
+    while (file_in.read(reinterpret_cast<char*>(&emp), sizeof(employee)))
+    {
+        double salary = emp.hours * hourly_rate;
+        report_out << emp.num << ", "
+                   << emp.name << ", "
+                   << emp.hours << ", "
+                   << fixed << setprecision(2) << salary << "\n";
     }
 
-    inFile.close();
-    outFile.close();
+    file_in.close();
+    report_out.close();
     return true;
 }
 
-#ifndef TESTING
-int main(int argc, char* argv[]) {
-    if (argc != 4) {
-        std::cerr << "Usage: Reporter <input_file> <output_file> <hourly_rate>" << std::endl;
+int main(int argc, char* argv[])
+{
+    if (argc != 4)
+    {
+        cerr << "Usage: reporter.exe <binary_file> <report_file> <hourly_rate>" << endl;
         return 1;
     }
 
-    double hourlyRate;
-    try {
-        hourlyRate = std::stod(argv[3]);
-        if (hourlyRate <= 0) {
-            std::cerr << "Error: Hourly rate must be a positive number" << std::endl;
-            return 1;
-        }
-    } catch (const std::exception& e) {
-        std::cerr << "Error: Invalid hourly rate - " << e.what() << std::endl;
+    string bin_file = argv[1];
+    string report_file = argv[2];
+    double rate = stod(argv[3]);
+
+    if (!generate_report(bin_file, report_file, rate))
+    {
         return 1;
     }
 
-    if (!GenerateSalaryReport(argv[1], argv[2], hourlyRate)) {
-        return 1;
-    }
-
-    std::cout << "Report '" << argv[2] << "' generated successfully.\n";
     return 0;
 }
-#endif

@@ -1,112 +1,59 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <sstream>
-#include <iostream>
-#include <string>
-#include <iomanip>
+#include "common.h"
 
-struct EmployeeRecord {
-    int employeeId;
-    char employeeName[10];
-    double workedHours;
-};
+using namespace std;
 
-bool GenerateSalaryReport(const std::string& inputFile, const std::string& outputFile, double hourlyRate) {
-    std::ifstream inFile(inputFile, std::ios::binary);
-    if (!inFile.is_open()) {
-        std::cerr << "Error: Cannot open input file " << inputFile << std::endl;
-        return false;
-    }
+TEST(ReporterTest, GenerateReportSuccess)
+{
+    string bin_file = "test_bin.bin";
+    string report_file = "test_report.txt";
 
-    std::ofstream outFile(outputFile);
-    if (!outFile.is_open()) {
-        std::cerr << "Error: Cannot create output file " << outputFile << std::endl;
-        inFile.close();
-        return false;
-    }
-
-    const unsigned char bom[] = {0xEF, 0xBB, 0xBF};
-    outFile.write(reinterpret_cast<const char*>(bom), sizeof(bom));
-
-    outFile << "File report \"" << inputFile << "\"\n";
-    outFile << "Employee's number\tEmployee's name\tTime\tSalary\n";
-
-    EmployeeRecord employee;
-    while (inFile.read(reinterpret_cast<char*>(&employee), sizeof(EmployeeRecord))) {
-        double salary = employee.workedHours * hourlyRate;
-        outFile << employee.employeeId << "\t\t\t"
-                << employee.employeeName << "\t\t"
-                << employee.workedHours << "\t"
-                << std::fixed << std::setprecision(2) << salary << "\n";
-    }
-
-    inFile.close();
-    outFile.close();
-    return true;
-}
-
-TEST(ReporterTest, GenerateSalaryReportTest) {
-    std::string inputFilename = "test_input.bin";
-    std::string outputFilename = "test_report.txt";
-
-    EmployeeRecord testEmployees[] = {
-        {101, "John", 8.5},
-        {102, "Jane", 7.0}
+    employee test_employees[] = {
+        {1, "Ivanov", 10.0},
+        {2, "Petrov", 20.0}
     };
 
-    std::ofstream testFile(inputFilename, std::ios::binary);
-    for (const auto& emp : testEmployees) {
-        testFile.write(reinterpret_cast<const char*>(&emp), sizeof(EmployeeRecord));
+    ofstream bin_out(bin_file, ios::binary);
+    for (const auto& emp : test_employees)
+    {
+        bin_out.write(reinterpret_cast<const char*>(&emp), sizeof(employee));
     }
-    testFile.close();
+    bin_out.close();
 
-    double hourlyRate = 10.0;
+    ifstream file_in(bin_file, ios::binary);
+    ofstream report_out(report_file);
 
-    bool result = GenerateSalaryReport(inputFilename, outputFilename, hourlyRate);
+    report_out << "Report for file \"" << bin_file << "\"\n";
+    report_out << "Employee number, employee name, hours, salary\n";
 
-    EXPECT_TRUE(result);
-
-    std::ifstream reportFile(outputFilename);
-    std::string reportContent;
-    std::string line;
-    while (std::getline(reportFile, line)) {
-        reportContent += line + "\n";
+    employee emp;
+    while (file_in.read(reinterpret_cast<char*>(&emp), sizeof(employee)))
+    {
+        double salary = emp.hours * 150.0;
+        report_out << emp.num << ", "
+                   << emp.name << ", "
+                   << emp.hours << ", "
+                   << fixed << setprecision(2) << salary << "\n";
     }
-    reportFile.close();
 
-    EXPECT_NE(reportContent.find("101"), std::string::npos);
-    EXPECT_NE(reportContent.find("John"), std::string::npos);
-    EXPECT_NE(reportContent.find("8.5"), std::string::npos);
-    EXPECT_NE(reportContent.find("85.00"), std::string::npos);
+    file_in.close();
+    report_out.close();
 
-    remove(inputFilename.c_str());
-    remove(outputFilename.c_str());
-}
+    ifstream report_in(report_file);
+    ASSERT_TRUE(report_in.is_open());
 
-TEST(ReporterTest, EmptyInputTest) {
-    std::string inputFilename = "empty_test.bin";
-    std::string outputFilename = "empty_report.txt";
+    stringstream buffer;
+    buffer << report_in.rdbuf();
+    string content = buffer.str();
 
-    std::ofstream testFile(inputFilename, std::ios::binary);
-    testFile.close();
+    EXPECT_NE(content.find("Report for file \"test_bin.bin\""), string::npos);
+    EXPECT_NE(content.find("Employee number, employee name, hours, salary"), string::npos);
+    EXPECT_NE(content.find("1, Ivanov, 10.00, 1500.00"), string::npos);
+    EXPECT_NE(content.find("2, Petrov, 20.00, 3000.00"), string::npos);
 
-    double hourlyRate = 10.0;
-
-    bool result = GenerateSalaryReport(inputFilename, outputFilename, hourlyRate);
-
-    EXPECT_TRUE(result);
-
-    std::ifstream reportFile(outputFilename);
-    std::string reportContent;
-    std::string line;
-    while (std::getline(reportFile, line)) {
-        reportContent += line + "\n";
-    }
-    reportFile.close();
-
-    EXPECT_NE(reportContent.find("File report"), std::string::npos);
-    EXPECT_NE(reportContent.find("Employee's number"), std::string::npos);
-
-    remove(inputFilename.c_str());
-    remove(outputFilename.c_str());
+    report_in.close();
+    remove(bin_file.c_str());
+    remove(report_file.c_str());
 }

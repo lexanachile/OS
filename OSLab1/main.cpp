@@ -1,161 +1,88 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <windows.h>
+#include "common.h"
 
-struct EmployeeInfo {
-    int id;
-    char name[10];
-    double hours;
-};
+using namespace std;
 
-bool ExecuteProcess(const std::string& command, const std::string& processName) {
-    STARTUPINFO si;
+void print_binary_file(const string& filename)
+{
+    ifstream file(filename, ios::binary);
+    if (!file.is_open())
+    {
+        cerr << "Error: Cannot open binary file to display." << endl;
+        return;
+    }
+
+    employee emp;
+    while (file.read(reinterpret_cast<char*>(&emp), sizeof(employee)))
+    {
+        cout << emp.num << " " << emp.name << " " << emp.hours << endl;
+    }
+    file.close();
+}
+
+int main()
+{
+    string binary_file_name;
+    int entries_amount;
+
+    cout << "Enter binary file name: ";
+    cin >> binary_file_name;
+    cout << "Enter number of employee records to create: ";
+    cin >> entries_amount;
+
+    string creator_cmd = "creator.exe " + binary_file_name + " " + to_string(entries_amount);
+
+    STARTUPINFOA si;
     PROCESS_INFORMATION pi;
-
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
-    ZeroMemory(&pi, sizeof(pi));
 
-    std::vector<char> cmdLine(command.begin(), command.end());
-    cmdLine.push_back('\0');
-
-    if (!CreateProcess(
-        NULL,
-        cmdLine.data(),
-        NULL,
-        NULL,
-        FALSE,
-        0,
-        NULL,
-        NULL,
-        &si,
-        &pi
-    )) {
-        std::cerr << "Error: Failed to start " << processName << " process (Error code: " << GetLastError() << ")\n";
-        return false;
+    if (!CreateProcessA(NULL, &creator_cmd[0], NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+    {
+        cerr << "Couldn't create Creator process" << endl;
+        return 1;
     }
 
     WaitForSingleObject(pi.hProcess, INFINITE);
-
-    DWORD exitCode;
-    if (!GetExitCodeProcess(pi.hProcess, &exitCode)) {
-        std::cerr << "Error: Failed to get exit code for " << processName << std::endl;
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
-        return false;
-    }
-
-    CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
+    CloseHandle(pi.hProcess);
 
-    if (exitCode != 0) {
-        std::cerr << "Error: " << processName << " process failed with exit code " << exitCode << std::endl;
-        return false;
-    }
+    cout << "\nBinary file content:" << endl;
+    print_binary_file(binary_file_name);
 
-    return true;
-}
+    string report_file_name;
+    double hourly_rate;
 
-void DisplayBinaryFileContent(const std::string& filename) {
-    std::ifstream file(filename, std::ios::binary);
-    if (!file.is_open()) {
-        std::cerr << "Error: Cannot open file " << filename << std::endl;
-        return;
-    }
+    cout << "\nEnter report file name: ";
+    cin >> report_file_name;
+    cout << "Enter hourly rate for salary calculation: ";
+    cin >> hourly_rate;
 
-    EmployeeInfo employee;
-    std::cout << "\nContents of binary file '" << filename << "':\n";
-    std::cout << "ID\tName\tHours\n";
-    std::cout << "----------------\n";
+    string reporter_cmd = "reporter.exe " + binary_file_name + " " + report_file_name + " " + to_string(hourly_rate);
 
-    while (file.read(reinterpret_cast<char*>(&employee), sizeof(EmployeeInfo))) {
-        std::cout << employee.id << "\t" << employee.name << "\t" << employee.hours << std::endl;
-    }
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
 
-    file.close();
-}
-
-void DisplayTextFileContent(const std::string& filename) {
-    UINT originalCP = GetConsoleOutputCP();
-    SetConsoleOutputCP(CP_UTF8);
-
-    std::ifstream file(filename, std::ios::binary);
-    if (!file.is_open()) {
-        std::cerr << "Error: Cannot open file " << filename << std::endl;
-        SetConsoleOutputCP(originalCP);
-        return;
-    }
-
-    char bom[3];
-    file.read(bom, 3);
-    if (bom[0] != '\xEF' || bom[1] != '\xBB' || bom[2] != '\xBF') {
-        file.seekg(0);
-    }
-
-    std::cout << "\nContents of report file '" << filename << "':\n";
-    std::string line;
-    while (std::getline(file, line)) {
-        std::cout << line << std::endl;
-    }
-
-    file.close();
-    SetConsoleOutputCP(originalCP);
-}
-
-int main() {
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
-
-    std::string dataFilename;
-    int recordsCount;
-
-    std::cout << "Enter binary filename: ";
-    std::cin >> dataFilename;
-    std::cout << "Enter number of records: ";
-    std::cin >> recordsCount;
-
-    if (recordsCount <= 0) {
-        std::cerr << "Error: Number of records must be a positive integer" << std::endl;
+    if (!CreateProcessA(NULL, &reporter_cmd[0], NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+    {
+        cerr << "Couldn't create Reporter process" << endl;
         return 1;
     }
 
-    std::string creatorCommand = "Creator.exe " + dataFilename + " " + std::to_string(recordsCount);
-    if (!ExecuteProcess(creatorCommand, "Creator")) {
-        return 1;
+    WaitForSingleObject(pi.hProcess, INFINITE);
+    CloseHandle(pi.hThread);
+    CloseHandle(pi.hProcess);
+
+    cout << "\nReport content:" << endl;
+    ifstream report_file(report_file_name);
+    if (report_file.is_open())
+    {
+        string line;
+        while (getline(report_file, line))
+        {
+            cout << line << endl;
+        }
+        report_file.close();
     }
-
-    DisplayBinaryFileContent(dataFilename);
-
-    std::string reportFilename;
-    double hourlyRate;
-
-    std::cout << "\nEnter report filename: ";
-    std::cin >> reportFilename;
-    std::cout << "Enter hourly rate: ";
-    std::cin >> hourlyRate;
-
-    if (hourlyRate <= 0) {
-        std::cerr << "Error: Hourly rate must be a positive number" << std::endl;
-        return 1;
-    }
-
-    std::string reporterCommand = "Reporter.exe " + dataFilename + " " + reportFilename + " " + std::to_string(hourlyRate);
-    if (!ExecuteProcess(reporterCommand, "Reporter")) {
-        return 1;
-    }
-
-    DisplayTextFileContent(reportFilename);
-
-#ifdef TESTING
-    return 0;
-#endif
-
-    std::cout << "\nAll operations completed successfully. Press Enter to exit...";
-    std::cin.ignore();
-    std::cin.get();
 
     return 0;
-
 }
