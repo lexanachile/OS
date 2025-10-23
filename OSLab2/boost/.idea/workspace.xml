@@ -28,9 +28,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fe462525-06b3-45f3-a6fb-c15adfc6be5f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="fe462525-06b3-45f3-a6fb-c15adfc6be5f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -109,9 +107,9 @@
     </configuration>
     <list>
       <item itemvalue="Boost.Test.tests" />
-      <item itemvalue="C/C++ File.main.cpp" />
       <item itemvalue="CMake Application.main" />
       <item itemvalue="CTest Application.All CTest" />
+      <item itemvalue="C/C++ File.main.cpp" />
     </list>
     <recent_temporary>
       <list>
@@ -137,6 +135,7 @@
       <workItem from="1761196506675" duration="557000" />
       <workItem from="1761197087168" duration="175000" />
       <workItem from="1761200945793" duration="32000" />
+      <workItem from="1761399227612" duration="28000" />
     </task>
     <servers />
   </component>
