@@ -6,6 +6,8 @@
   <component name="BackendCodeEditorMiscSettings">
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -28,7 +30,21 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fe462525-06b3-45f3-a6fb-c15adfc6be5f" name="Changes" comment="" />
+    <list default="true" id="fe462525-06b3-45f3-a6fb-c15adfc6be5f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../OSLab3/Boost/.idea/Boost.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../OSLab3/winapi/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../OSLab4/Lab4WinApi/.idea/Lab4WinApi.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../lab3/Main/.idea/Main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../OSColloquiums/CollTask/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../OSColloquiums/CollTask/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../OSColloquiums/CollTask/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../OSColloquiums/CollTask/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../OSLab3/winapi/.clang-format" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../OSLab3/winapi/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../OSLab3/winapi/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../OSLab3/winapi/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../OSLab3/winapi/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../OSLab3/winapi/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../OSLab3/winapi/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../OSLab3/winapi/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../OSLab3/winapi/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../OSLab3/winapi/main.cpp" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -136,6 +152,9 @@
       <workItem from="1761197087168" duration="175000" />
       <workItem from="1761200945793" duration="32000" />
       <workItem from="1761399227612" duration="28000" />
+      <workItem from="1765302460881" duration="58000" />
+      <workItem from="1765304966405" duration="1000" />
+      <workItem from="1765349142629" duration="11000" />
     </task>
     <servers />
   </component>
