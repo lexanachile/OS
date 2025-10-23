@@ -109,9 +109,9 @@
     </configuration>
     <list>
       <item itemvalue="Boost.Test.tests" />
+      <item itemvalue="C/C++ File.main.cpp" />
       <item itemvalue="CMake Application.main" />
       <item itemvalue="CTest Application.All CTest" />
-      <item itemvalue="C/C++ File.main.cpp" />
     </list>
     <recent_temporary>
       <list>
@@ -136,6 +136,7 @@
       <workItem from="1761165168162" duration="81000" />
       <workItem from="1761196506675" duration="557000" />
       <workItem from="1761197087168" duration="175000" />
+      <workItem from="1761200945793" duration="32000" />
     </task>
     <servers />
   </component>
